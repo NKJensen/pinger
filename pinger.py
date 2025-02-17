@@ -13,21 +13,21 @@ class PingApp:
         self.gateway_status_rect = self.canvas.create_rectangle(50, 50, 250, 150, fill="green")
         self.gateway_status_text = self.canvas.create_text(150, 100, text="Measuring max ping length", font=("Helvetica", 16))
 
-        # Second square for tv2.dk
-        self.tv2_status_rect = self.canvas.create_rectangle(50, 200, 250, 300, fill="green")
-        self.tv2_status_text = self.canvas.create_text(150, 250, text="Measuring max ping length", font=("Helvetica", 16))
+        # Second square for ntp.inet.tele.dk
+        self.ntp_status_rect = self.canvas.create_rectangle(50, 200, 250, 300, fill="green")
+        self.ntp_status_text = self.canvas.create_text(150, 250, text="Measuring max ping length", font=("Helvetica", 16))
 
         # Third text item for the timestamp of the last poll
         self.last_poll_text = self.canvas.create_text(150, 350, text="Last Poll: N/A", font=("Helvetica", 12))
 
         self.gateway_last_status = None
-        self.tv2_last_status = None
+        self.ntp_last_status = None
 
         # Set initial text before measuring
         self.canvas.itemconfig(self.gateway_status_text, text="Measuring max ping length")
         self.canvas.itemconfig(self.gateway_status_rect, fill="yellow")
-        self.canvas.itemconfig(self.tv2_status_text, text="Measuring max ping length")
-        self.canvas.itemconfig(self.tv2_status_rect, fill="yellow")
+        self.canvas.itemconfig(self.ntp_status_text, text="Measuring max ping length")
+        self.canvas.itemconfig(self.ntp_status_rect, fill="yellow")
 
         # Call update_ping after a short delay to ensure initial text is displayed
         self.root.after(1000, self.update_ping)
@@ -79,7 +79,7 @@ class PingApp:
 
     def update_ping(self):
         self.update_gateway_ping()
-        self.update_tv2_ping()
+        self.update_ntp_ping()
         self.update_last_poll()
         self.root.after(60000, self.update_ping)
 
@@ -111,8 +111,8 @@ class PingApp:
             self.gateway_last_status = new_status
             self.canvas.tag_raise(self.gateway_status_text)
 
-    def update_tv2_ping(self):
-        target = "tv2.dk"
+    def update_ntp_ping(self):
+        target = "ntp.inet.tele.dk"
 
         max_ping_size = self.find_max_ping_size(target)
         if max_ping_size >= 4096:
@@ -120,12 +120,12 @@ class PingApp:
         else:
             new_status = (f"Max Ping Size: {max_ping_size}", "red")
 
-        if new_status != self.tv2_last_status:
+        if new_status != self.ntp_last_status:
             timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-            self.canvas.itemconfig(self.tv2_status_text, text=f"tv2.dk: {new_status[0]}\n{timestamp}")
-            self.canvas.itemconfig(self.tv2_status_rect, fill=new_status[1])
-            self.tv2_last_status = new_status
-            self.canvas.tag_raise(self.tv2_status_text)
+            self.canvas.itemconfig(self.ntp_status_text, text=f"ntp.inet.tele.dk: {new_status[0]}\n{timestamp}")
+            self.canvas.itemconfig(self.ntp_status_rect, fill=new_status[1])
+            self.ntp_last_status = new_status
+            self.canvas.tag_raise(self.ntp_status_text)
 
     def update_last_poll(self):
         timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
